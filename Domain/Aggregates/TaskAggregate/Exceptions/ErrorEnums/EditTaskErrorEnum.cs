@@ -1,4 +1,4 @@
-namespace Domain.Aggregates.TaskAggregate.Exceptions;
+namespace Domain.Aggregates.TaskAggregate.Exceptions.ErrorEnums;
 
 public enum EditTaskErrorEnum
 {

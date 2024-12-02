@@ -1,6 +1,7 @@
 using Business.Application.Commands.Task.Complete;
 using Domain.Aggregates.TaskAggregate;
 using Domain.Aggregates.TaskAggregate.Exceptions;
+using Domain.Aggregates.TaskAggregate.Exceptions.ErrorEnums;
 using Domain.Utility.ExceptionHandler;
 using MediatR;
 
@@ -10,7 +11,7 @@ public class CompleteTaskService(IMediator mediator) : ICompleteTaskService
 {
     public async System.Threading.Tasks.Task CompleteAsync(Guid taskId, CancellationToken cancellationToken)
     {
-        await mediator.Publish(new CompleteTaskCommand(taskId), cancellationToken);
+        await mediator.Send(new CompleteTaskCommand(taskId), cancellationToken);
     }
     
     public class CompleteTaskErrors : ErrorTypeEnumeration

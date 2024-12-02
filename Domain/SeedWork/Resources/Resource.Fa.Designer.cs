@@ -60,6 +60,15 @@ namespace Domain.SeedWork.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to موردی یافت نشد!.
+        /// </summary>
+        internal static string NotFound {
+            get {
+                return ResourceManager.GetString("NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to خطای پیش بینی نشده رخ داد!.
         /// </summary>
         internal static string Unknown {

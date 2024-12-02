@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Aggregates.TaskAggregate;
@@ -25,5 +26,10 @@ public class TaskQueryRepository(SqlDbContext context)  : ITaskQueryRepository
     public async Task<bool> IsTaskCompletedAsync(Guid taskId, CancellationToken cancellationToken)
     {
         return await context.Tasks.AnyAsync(task => task.Id == taskId && task.IsCompleted, cancellationToken);
+    }
+
+    public async Task<List<Domain.Aggregates.TaskAggregate.Task>> GetListAsync(CancellationToken cancellationToken)
+    {
+        return await context.Tasks.ToListAsync(cancellationToken);
     }
 }

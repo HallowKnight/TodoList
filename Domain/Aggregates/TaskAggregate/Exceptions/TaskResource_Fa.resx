@@ -18,4 +18,26 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
+    <!--Resources-->
+    <data name="TitleRequired" xml:space="preserve">
+        <value>عنوان اجباری می باشد!</value>
+    </data>
+    <data name="DescriptionRequired" xml:space="preserve">
+        <value>توضیحات اجباری می باشد!</value>
+    </data>
+    <data name="DueDateRequired" xml:space="preserve">
+        <value>تاریخ انجام اجباری می باشد!</value>
+    </data>
+    <data name="TitleMaxLengthExceeded" xml:space="preserve">
+        <value>حداکثر تعداد کاراکتر عنوان 100 عدد می باشد!</value>
+    </data>
+    <data name="InvalidDueDate" xml:space="preserve">
+        <value>لطفا تاریخی معتبر وارد نمایید! تاریخ باید بزرگ تر از حال حاضر باشد.</value>
+    </data>
+    <data name="NotFound" xml:space="preserve">
+        <value>موردی یافت نشد!</value>
+    </data>
+    <data name="AlreadyDone" xml:space="preserve">
+        <value>کار قبلا انجام شده!</value>
+    </data>
 </root>

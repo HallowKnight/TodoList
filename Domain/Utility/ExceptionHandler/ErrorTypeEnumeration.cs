@@ -8,6 +8,7 @@ namespace Domain.Utility.ExceptionHandler;
 public class ErrorTypeEnumeration
 {
     public static readonly ErrorTypeEnumeration Unknown = new(nameof(Resource_Fa.Unknown));
+    public static readonly ErrorTypeEnumeration NotFound = new(nameof(Resource_Fa.NotFound));
 
     public string Name { get; }
     public int ErrorCode { get; }

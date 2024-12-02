@@ -10,17 +10,6 @@ public class EditTaskService(IMediator mediator) : IEditTaskService
 {
     public async System.Threading.Tasks.Task EditAsync(EditTaskDto editTaskDto, CancellationToken cancellationToken)
     {
-        await mediator.Publish(new EditTaskCommand(editTaskDto), cancellationToken);
-    }
-    
-    public class EditTaskErrors : ErrorTypeEnumeration
-    {
-        public EditTaskErrors(int errorCode, string name) : base(errorCode, name)
-        {
-        }
-
-        public static readonly EditTaskErrors NotFound =
-            new((int)EditTaskErrorEnum.NotFound,
-                nameof(EditTaskErrorEnum.NotFound));
+        await mediator.Send(new EditTaskCommand(editTaskDto), cancellationToken);
     }
 }

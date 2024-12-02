@@ -1,4 +1,5 @@
 using Domain.Aggregates.TaskAggregate.Exceptions;
+using Domain.Aggregates.TaskAggregate.Exceptions.ErrorEnums;
 using Domain.Utility.ExceptionHandler;
 using MediatR;
 
@@ -10,8 +11,4 @@ public class CompleteTaskCommandException<TRequest>(int errorCode, string name) 
     public static readonly CompleteTaskCommandException<TRequest> AlreadyDone =
         new((int)EditTaskErrorEnum.AlreadyDone,
             nameof(EditTaskErrorEnum.AlreadyDone));
-    
-    public static readonly CompleteTaskCommandException<TRequest> NotFound =
-        new((int)EditTaskErrorEnum.NotFound,
-            nameof(EditTaskErrorEnum.NotFound));
 }

@@ -10,6 +10,6 @@ public class AddTaskService(IMediator mediator) : IAddTaskService
 {
     public async System.Threading.Tasks.Task AddAsync(AddTaskDto addTaskDto, CancellationToken cancellationToken = default)
     {
-        await mediator.Publish(new AddTaskCommand(addTaskDto), cancellationToken);
+        await mediator.Send(new AddTaskCommand(addTaskDto), cancellationToken);
     }
 }

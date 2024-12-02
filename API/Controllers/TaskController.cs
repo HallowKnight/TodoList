@@ -4,10 +4,12 @@ using Business.Actions.Task.Complete;
 using Business.Actions.Task.Delete;
 using Business.Actions.Task.Edit;
 using Business.Actions.Task.Edit.Dto;
+using Business.Actions.Task.Get;
+using Business.Actions.Task.Get.Dto;
+using Business.Actions.Task.GetList;
 using Domain.Utility.ExceptionHandler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 
 namespace Api.Controllers;
 
@@ -15,13 +17,6 @@ namespace Api.Controllers;
 [Route("api/[controller]/[action]")]
 public class TaskController : Controller
 {
-    private readonly IStringLocalizer _stringLocalizer;
-
-    public TaskController(IStringLocalizer stringLocalizer)
-    {
-        _stringLocalizer = stringLocalizer;
-    }
-
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status406NotAcceptable, Type = typeof(string))]
@@ -37,9 +32,11 @@ public class TaskController : Controller
         catch (Exception e)
         {
             ErrorTypeEnumeration? error = ExceptionHandler.GetError(e);
+            //Can get message using localizer
             return error == null
                 ? StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong")
-                : StatusCode(StatusCodes.Status406NotAcceptable, error.GetMessage(_stringLocalizer));
+                : StatusCode(StatusCodes.Status406NotAcceptable);
+                //: StatusCode(StatusCodes.Status406NotAcceptable, error.GetMessage(_stringLocalizer));
         }
     }
 
@@ -63,7 +60,7 @@ public class TaskController : Controller
                 ? StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong")
                 : StatusCode(Equals(error, CompleteTaskService.CompleteTaskErrors.NotFound)
                     ? StatusCodes.Status404NotFound
-                    : StatusCodes.Status406NotAcceptable, error.GetMessage(_stringLocalizer));
+                    : StatusCodes.Status406NotAcceptable);
         }
     }
     
@@ -84,9 +81,9 @@ public class TaskController : Controller
             ErrorTypeEnumeration? error = ExceptionHandler.GetError(e);
             return error == null
                 ? StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong")
-                : StatusCode(Equals(error, EditTaskService.EditTaskErrors.NotFound)
+                : StatusCode(Equals(error, ErrorTypeEnumeration.NotFound)
                     ? StatusCodes.Status404NotFound
-                    : StatusCodes.Status406NotAcceptable, error.GetMessage(_stringLocalizer));
+                    : StatusCodes.Status406NotAcceptable);
         }
     }
     
@@ -107,7 +104,47 @@ public class TaskController : Controller
             ErrorTypeEnumeration? error = ExceptionHandler.GetError(e);
             return error == null
                 ? StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong")
-                : StatusCode(StatusCodes.Status404NotFound, error.GetMessage(_stringLocalizer));
+                : StatusCode(StatusCodes.Status404NotFound);
+        }
+    }
+    
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TaskDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+    public async Task<IActionResult> Get([FromServices] IGetTaskService getTaskService,
+        [FromBody] Guid taskId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await getTaskService.GetAsync(taskId, cancellationToken);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            ErrorTypeEnumeration? error = ExceptionHandler.GetError(e);
+            return error == null
+                ? StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong")
+                : StatusCode(StatusCodes.Status404NotFound);
+        }
+    }
+    
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TaskDto))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+    public async Task<IActionResult> GetList([FromServices] IGetTaskListService getTaskListService, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await getTaskListService.GetAllAsync(cancellationToken);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            ErrorTypeEnumeration? error = ExceptionHandler.GetError(e);
+            return error == null
+                ? StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong")
+                : StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
 }
