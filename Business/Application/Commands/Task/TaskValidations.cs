@@ -5,11 +5,16 @@ namespace Business.Application.Commands.Task;
 
 public abstract class TaskValidations(ITaskQueryRepository taskQueryRepository) : ITaskValidations
 {
-    public static bool ExceededTitleMaxLenght(string title)
+    public static bool ExceededTitleMaxLenght(string? title)
     {
-        return title.Length > 100;
+        return title is null || title.Length > 100;
     }
 
+    public static bool ValidDueDate(DateTime? dueDate)
+    {
+        return dueDate is null || dueDate <= DateTime.Now;
+    }
+    
     public static bool ValidDueDate(DateTime dueDate)
     {
         return dueDate <= DateTime.Now;
@@ -24,4 +29,5 @@ public abstract class TaskValidations(ITaskQueryRepository taskQueryRepository) 
     {
         return await taskQueryRepository.IsTaskCompletedAsync(taskId, cancellationToken);
     }
+
 }

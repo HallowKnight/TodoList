@@ -22,7 +22,12 @@ public class Task : Entity<Guid>, IAggregateRoot
     public string Description { get; private set; }
     public bool IsCompleted { get; private set; }
     public DateTime DueDate { get; private set; }
-    
-    
+
+    public void Update(string? title, string? description, DateTime? dueDate)
+    {
+        Title = title ?? Title;
+        Description = description ?? Description;
+        DueDate = dueDate ?? DueDate;
+    }
     public void Complete() => IsCompleted = true;
 }

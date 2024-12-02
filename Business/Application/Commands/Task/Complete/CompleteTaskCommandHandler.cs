@@ -3,11 +3,13 @@ using MediatR;
 
 namespace Business.Application.Commands.Task.Complete;
 
-public class CompleteTaskCommandHandler(ITaskCommandRepository taskCommandRepository) : IRequestHandler<CompleteTaskCommand>
+public class CompleteTaskCommandHandler(ITaskCommandRepository taskCommandRepository,
+    ITaskQueryRepository taskQueryRepository) : IRequestHandler<CompleteTaskCommand>
 {
-    public System.Threading.Tasks.Task Handle(CompleteTaskCommand request, CancellationToken cancellationToken)
+    public async System.Threading.Tasks.Task Handle(CompleteTaskCommand request, CancellationToken cancellationToken)
     {
-        taskCommandRepository.UpdateTask(request.Task);
-        return System.Threading.Tasks.Task.CompletedTask;
+        Domain.Aggregates.TaskAggregate.Task task = (await taskQueryRepository.GetAsync(request.Id, cancellationToken))!;
+        task.Complete();
+        taskCommandRepository.UpdateTask(task);
     }
 }

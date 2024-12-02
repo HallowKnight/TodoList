@@ -1,6 +1,8 @@
 using Business.Actions.Task.Add;
 using Business.Actions.Task.Add.Dto;
 using Business.Actions.Task.Complete;
+using Business.Actions.Task.Edit;
+using Business.Actions.Task.Edit.Dto;
 using Domain.Utility.ExceptionHandler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +53,30 @@ public class TaskController : Controller
         try
         {
             await completeTaskService.CompleteAsync(taskId, cancellationToken);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            ErrorTypeEnumeration? error = ExceptionHandler.GetError(e);
+            return error == null
+                ? StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong")
+                : StatusCode(Equals(error, CompleteTaskService.CompleteTaskErrors.NotFound)
+                    ? StatusCodes.Status404NotFound
+                    : StatusCodes.Status406NotAcceptable, error.GetMessage(_stringLocalizer));
+        }
+    }
+    
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+    public async Task<IActionResult> Edit([FromServices] IEditTaskService editTaskService,
+        [FromBody] EditTaskDto editTaskDto, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await editTaskService.EditAsync(editTaskDto, cancellationToken);
             return Ok();
         }
         catch (Exception e)

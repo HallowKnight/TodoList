@@ -19,7 +19,6 @@
     <ItemGroup>
       <Folder Include="Application\Commands\" />
       <Folder Include="Application\Commands\Task\Delete\" />
-      <Folder Include="Application\Commands\Task\Edit\" />
       <Folder Include="Application\Queries\GetAll\" />
       <Folder Include="Application\Queries\Get\" />
     </ItemGroup>
