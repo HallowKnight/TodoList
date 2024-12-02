@@ -2,7 +2,7 @@ using Domain.Aggregates.TaskAggregate.Exceptions;
 using Domain.Utility.ExceptionHandler;
 using MediatR;
 
-namespace Business.Application.Commands.Task.Edit;
+namespace Business.Application.Commands.Task.Complete;
 
 public class CompleteTaskCommandException<TRequest>(int errorCode, string name) : ErrorTypeEnumeration(errorCode, name)
     where TRequest : IRequest

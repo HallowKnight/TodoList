@@ -7,7 +7,7 @@ public class AddTaskCommandHandler(ITaskCommandRepository taskCommandRepository)
 {
     public async System.Threading.Tasks.Task Handle(AddTaskCommand request, CancellationToken cancellationToken)
     {
-        await taskCommandRepository.AddTaskAsync(
+        await taskCommandRepository.AddAsync(
             new Domain.Aggregates.TaskAggregate.Task(request.Title, request.Description, request.DueDate),
             cancellationToken);
     }

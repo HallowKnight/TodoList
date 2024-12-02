@@ -1,6 +1,7 @@
 using Business.Actions.Task.Add;
 using Business.Actions.Task.Add.Dto;
 using Business.Actions.Task.Complete;
+using Business.Actions.Task.Delete;
 using Business.Actions.Task.Edit;
 using Business.Actions.Task.Edit.Dto;
 using Domain.Utility.ExceptionHandler;
@@ -68,7 +69,6 @@ public class TaskController : Controller
     
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status406NotAcceptable, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
     public async Task<IActionResult> Edit([FromServices] IEditTaskService editTaskService,
@@ -84,9 +84,30 @@ public class TaskController : Controller
             ErrorTypeEnumeration? error = ExceptionHandler.GetError(e);
             return error == null
                 ? StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong")
-                : StatusCode(Equals(error, CompleteTaskService.CompleteTaskErrors.NotFound)
+                : StatusCode(Equals(error, EditTaskService.EditTaskErrors.NotFound)
                     ? StatusCodes.Status404NotFound
                     : StatusCodes.Status406NotAcceptable, error.GetMessage(_stringLocalizer));
+        }
+    }
+    
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
+    public async Task<IActionResult> Delete([FromServices] IDeleteTaskService deleteTaskService,
+        [FromBody] Guid taskId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await deleteTaskService.DeleteAsync(taskId, cancellationToken);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            ErrorTypeEnumeration? error = ExceptionHandler.GetError(e);
+            return error == null
+                ? StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong")
+                : StatusCode(StatusCodes.Status404NotFound, error.GetMessage(_stringLocalizer));
         }
     }
 }

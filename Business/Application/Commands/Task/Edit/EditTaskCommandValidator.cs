@@ -10,12 +10,12 @@ public class EditTaskCommandValidator : AbstractValidator<EditTaskCommand>
         RuleFor(task => task.Id)
             .MustAsync(async (taskId, cancellationToken) =>
                 await taskValidations.TaskExistAsync(taskId, cancellationToken))
-            .WithErrorCode(EditTaskCommandException<EditTaskCommand>.AlreadyDone.Name);
+            .WithErrorCode(EditTaskCommandException<EditTaskCommand>.NotFound.Name);
 
         RuleFor(task => task.Id)
             .MustAsync(async (taskId, cancellationToken) =>
                 !await taskValidations.TaskAlreadyCompleted(taskId, cancellationToken))
-            .WithErrorCode(EditTaskCommandException<EditTaskCommand>.NotFound.Name);
+            .WithErrorCode(EditTaskCommandException<EditTaskCommand>.AlreadyDone.Name);
         
         RuleFor(task => task.Title)
             .Must(TaskValidations.ExceededTitleMaxLenght)

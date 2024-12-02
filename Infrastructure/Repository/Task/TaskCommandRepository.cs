@@ -10,14 +10,19 @@ public class TaskCommandRepository(SqlDbContext context) : ITaskCommandRepositor
 {
     public IUnitOfWork UnitOfWork => context;
 
-    public async System.Threading.Tasks.Task AddTaskAsync(Domain.Aggregates.TaskAggregate.Task task,
+    public async System.Threading.Tasks.Task AddAsync(Domain.Aggregates.TaskAggregate.Task task,
         CancellationToken cancellationToken = default)
     {
         await context.Tasks.AddAsync(task, cancellationToken);
     }
 
-    public void UpdateTask(Domain.Aggregates.TaskAggregate.Task task)
+    public void Update(Domain.Aggregates.TaskAggregate.Task task)
     {
         context.Tasks.Update(task);
+    }
+
+    public void Delete(Domain.Aggregates.TaskAggregate.Task task)
+    {
+        context.Tasks.Remove(task);
     }
 }

@@ -10,6 +10,6 @@ public class EditTaskCommandHandler(ITaskCommandRepository taskCommandRepository
     {
         Domain.Aggregates.TaskAggregate.Task task = (await taskQueryRepository.GetAsync(request.Id, cancellationToken))!;
         task.Update(request.Title, request.Description, request.DueDate);
-        taskCommandRepository.UpdateTask(task);
+        taskCommandRepository.Update(task);
     }
 }

@@ -10,6 +10,6 @@ public class CompleteTaskCommandHandler(ITaskCommandRepository taskCommandReposi
     {
         Domain.Aggregates.TaskAggregate.Task task = (await taskQueryRepository.GetAsync(request.Id, cancellationToken))!;
         task.Complete();
-        taskCommandRepository.UpdateTask(task);
+        taskCommandRepository.Update(task);
     }
 }
