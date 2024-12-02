@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Business.Actions.Task.Add;
+namespace Business.Application.Commands.Task.Add;
 
 public class AddTaskCommandValidator : AbstractValidator<AddTaskCommand>
 {
@@ -19,7 +19,11 @@ public class AddTaskCommandValidator : AbstractValidator<AddTaskCommand>
             .WithErrorCode(AddTaskCommandException<AddTaskCommand>.DescriptionRequired.Name);
         
         RuleFor(task => task.DueDate)
+            .NotEmpty()
+            .WithErrorCode(AddTaskCommandException<AddTaskCommand>.DueDateRequired.Name);
+        
+        RuleFor(task => task.DueDate)
             .Must(TaskValidations.ValidDueDate)
-            .WithErrorCode(AddTaskCommandException<AddTaskCommand>.DescriptionRequired.Name);
+            .WithErrorCode(AddTaskCommandException<AddTaskCommand>.InvalidDueDate.Name);
     }
 }

@@ -1,7 +1,7 @@
 using Business.Actions.Task.Add.Dto;
 using MediatR;
 
-namespace Business.Actions.Task.Add;
+namespace Business.Application.Commands.Task.Add;
 
 public class AddTaskCommand(AddTaskDto addTaskDto) : IRequest
 {

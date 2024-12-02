@@ -1,8 +1,9 @@
 using Domain.Aggregates.TaskAggregate;
+using Domain.Aggregates.TaskAggregate.Exceptions;
 
-namespace Business.Actions.Task;
+namespace Business.Application.Commands.Task;
 
-public static class TaskValidations
+public abstract class TaskValidations(ITaskQueryRepository taskQueryRepository) : ITaskValidations
 {
     public static bool ExceededTitleMaxLenght(string title)
     {
@@ -12,5 +13,15 @@ public static class TaskValidations
     public static bool ValidDueDate(DateTime dueDate)
     {
         return dueDate <= DateTime.Now;
+    }
+
+    public async Task<bool> TaskExistAsync(Guid taskId, CancellationToken cancellationToken)
+    {
+        return await taskQueryRepository.ExistsAsync(taskId, cancellationToken);
+    }
+    
+    public async Task<bool> TaskAlreadyCompleted(Guid taskId, CancellationToken cancellationToken)
+    {
+        return await taskQueryRepository.IsTaskCompletedAsync(taskId, cancellationToken);
     }
 }

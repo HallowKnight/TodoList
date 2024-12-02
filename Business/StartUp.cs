@@ -1,5 +1,9 @@
+using Business.Actions.Task;
 using Business.Actions.Task.Add;
+using Business.Actions.Task.Complete;
+using Business.Application.Commands.Task;
 using Domain.Aggregates.TaskAggregate;
+using Domain.Aggregates.TaskAggregate.Exceptions;
 using Infrastructure.Repository.Task;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +24,9 @@ public static class StartUp
 
         #region Services
 
+        services.AddTransient<ITaskValidations, TaskValidations>();
         services.AddTransient<IAddTaskService, AddTaskService>();
+        services.AddTransient<ICompleteTaskService, CompleteTaskService>();
         
         #endregion
 

@@ -15,7 +15,7 @@ public class SqlDbContext : Microsoft.EntityFrameworkCore.DbContext, IUnitOfWork
 {
     #region DbSets
 
-    public DbSet<Domain.Aggregates.TaskAggregate.Task> Task { get; set; }
+    public DbSet<Domain.Aggregates.TaskAggregate.Task> Tasks { get; set; }
 
     #endregion
 

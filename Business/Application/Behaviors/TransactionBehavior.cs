@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Business.Behaviors;
+namespace Business.Application.Behaviors;
 
 public class TransactionBehavior<TRequest, TResponse>(SqlDbContext dbContext) : IPipelineBehavior<TRequest, TResponse?>
     where TRequest : IRequest<TResponse?>

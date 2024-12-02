@@ -1,7 +1,7 @@
 using Domain.Aggregates.TaskAggregate;
 using MediatR;
 
-namespace Business.Actions.Task.Add;
+namespace Business.Application.Commands.Task.Add;
 
 public class AddTaskCommandHandler(ITaskCommandRepository taskCommandRepository) : IRequestHandler<AddTaskCommand>
 {

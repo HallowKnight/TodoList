@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Domain.Aggregates.TaskAggregate;
 using Domain.SeedWork;
@@ -12,6 +13,11 @@ public class TaskCommandRepository(SqlDbContext context) : ITaskCommandRepositor
     public async System.Threading.Tasks.Task AddTaskAsync(Domain.Aggregates.TaskAggregate.Task task,
         CancellationToken cancellationToken = default)
     {
-        await context.AddAsync(task, cancellationToken);
+        await context.Tasks.AddAsync(task, cancellationToken);
+    }
+
+    public void UpdateTask(Domain.Aggregates.TaskAggregate.Task task)
+    {
+        context.Tasks.Update(task);
     }
 }

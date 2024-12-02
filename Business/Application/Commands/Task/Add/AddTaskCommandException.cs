@@ -1,9 +1,8 @@
 using Domain.Aggregates.TaskAggregate.Exceptions;
 using Domain.Utility.ExceptionHandler;
-using FluentValidation.Results;
 using MediatR;
 
-namespace Business.Actions.Task.Add;
+namespace Business.Application.Commands.Task.Add;
 
 public class AddTaskCommandException<TRequest>(int errorCode, string name) : ErrorTypeEnumeration(errorCode, name)
     where TRequest : IRequest
@@ -23,4 +22,8 @@ public class AddTaskCommandException<TRequest>(int errorCode, string name) : Err
     public static readonly AddTaskCommandException<TRequest> DueDateRequired =
         new((int)AddTaskErrorEnum.DueDateRequired,
             nameof(AddTaskErrorEnum.DueDateRequired));
+
+    public static readonly AddTaskCommandException<TRequest> InvalidDueDate =
+        new((int)AddTaskErrorEnum.InvalidDueDate,
+            nameof(AddTaskErrorEnum.InvalidDueDate));
 }

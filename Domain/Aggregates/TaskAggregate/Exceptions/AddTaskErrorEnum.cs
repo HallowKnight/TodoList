@@ -6,4 +6,5 @@ public enum AddTaskErrorEnum
     DescriptionRequired = 1,
     DueDateRequired = 2,
     TitleMaxLengthExceeded = 3,
+    InvalidDueDate = 4
 }
