@@ -96,7 +96,7 @@ public class TaskController : Controller
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
     public async Task<IActionResult> Edit([FromServices] IEditTaskService editTaskService,
-        [FromForm] Guid taskId, [FromForm] string title, [FromForm] string description, [FromForm] DateTime dueDate,
+        [FromForm] Guid taskId, [FromForm] string title, [FromForm] string description, [FromForm] DateTime? dueDate,
         CancellationToken cancellationToken = default)
     {
         try
@@ -155,12 +155,11 @@ public class TaskController : Controller
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
     public async Task<IActionResult> Get([FromServices] IGetTaskService getTaskService,
-        [FromForm] Guid taskId, CancellationToken cancellationToken = default)
+        [FromQuery] Guid taskId, CancellationToken cancellationToken = default)
     {
         try
         {
-            await getTaskService.GetAsync(taskId, cancellationToken);
-            return Ok();
+            return Ok(await getTaskService.GetAsync(taskId, cancellationToken));
         }
         catch (Exception e)
         {
@@ -185,8 +184,7 @@ public class TaskController : Controller
     {
         try
         {
-            await getTaskListService.GetAllAsync(cancellationToken);
-            return Ok();
+            return Ok(await getTaskListService.GetAllAsync(cancellationToken));
         }
         catch (Exception e)
         {
