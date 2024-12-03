@@ -10,6 +10,7 @@ using Business.Actions.Task.GetList;
 using Domain.Utility.ExceptionHandler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Api.Controllers;
 
@@ -17,6 +18,13 @@ namespace Api.Controllers;
 [Route("api/[controller]/[action]")]
 public class TaskController : Controller
 {
+    private readonly IStringLocalizer<TaskController> _stringLocalizer;
+
+    public TaskController(IStringLocalizer<TaskController> stringLocalizer)
+    {
+        _stringLocalizer = stringLocalizer;
+    }
+
     /// <summary>
     /// Adds a new task
     /// </summary>
@@ -45,7 +53,7 @@ public class TaskController : Controller
             //Can get message using localizer
             return error == null
                 ? StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong")
-                : StatusCode(StatusCodes.Status406NotAcceptable);
+                : StatusCode(StatusCodes.Status406NotAcceptable, error.GetMessage(_stringLocalizer));
             //: StatusCode(StatusCodes.Status406NotAcceptable, error.GetMessage(_stringLocalizer));
         }
     }
@@ -55,6 +63,7 @@ public class TaskController : Controller
     /// </summary>
     /// <param name="completeTaskService"></param>
     /// <param name="taskId"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]

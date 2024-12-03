@@ -7,15 +7,16 @@ using Business.Actions.Task.Get;
 using Business.Actions.Task.GetList;
 using Business.Application.Behaviors;
 using Business.Application.Commands.Task.Add;
+using Business.Application.StringLocalizer;
 using Domain.Aggregates.TaskAggregate;
 using FluentValidation;
 using Infrastructure.Persistence.DbContext;
 using Infrastructure.Repository.Task;
 using MediatR;
-using MediatR.Pipeline;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Task = Domain.Aggregates.TaskAggregate.Task;
 
 namespace Business;
 
@@ -52,6 +53,8 @@ public class Startup(IConfiguration configuration)
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         services.AddValidatorsFromAssemblyContaining<AddTaskCommandValidator>();
+        services.AddLocalization(options => options.ResourcesPath = "Resources");
+        services.AddLocalizationFromAssembly(typeof(Task).Assembly);
         #endregion
     }
 }
