@@ -51,16 +51,16 @@ public class SqlDbContext : Microsoft.EntityFrameworkCore.DbContext, IUnitOfWork
         return await base.SaveChangesAsync(cancellationToken) > 0;
     }
 
-    public async Task<IDbContextTransaction?> BeginTransactionAsync()
+    public async Task<IDbContextTransaction?> BeginTransactionAsync(CancellationToken cancellationToken)
     {
         if (_currentTransaction != null) return null;
 
-        _currentTransaction = await Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+        _currentTransaction = await Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
         return _currentTransaction;
     }
 
-    public async Task CommitTransactionAsync(IDbContextTransaction transaction)
+    public async Task CommitTransactionAsync(IDbContextTransaction transaction, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(transaction);
         if (transaction != _currentTransaction)
@@ -68,12 +68,12 @@ public class SqlDbContext : Microsoft.EntityFrameworkCore.DbContext, IUnitOfWork
 
         try
         {
-            await SaveChangesAsync();
-            await transaction.CommitAsync();
+            await SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
         }
         catch
         {
-            RollbackTransaction();
+            await RollbackTransactionAsync(cancellationToken);
             throw;
         }
         finally
@@ -86,11 +86,11 @@ public class SqlDbContext : Microsoft.EntityFrameworkCore.DbContext, IUnitOfWork
         }
     }
 
-    public void RollbackTransaction()
+    public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
     {
         try
         {
-            _currentTransaction?.Rollback();
+            await _currentTransaction!.RollbackAsync(cancellationToken);
         }
         finally
         {

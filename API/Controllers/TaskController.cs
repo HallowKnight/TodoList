@@ -17,16 +17,26 @@ namespace Api.Controllers;
 [Route("api/[controller]/[action]")]
 public class TaskController : Controller
 {
+    /// <summary>
+    /// Adds a new task
+    /// </summary>
+    /// <param name="addTaskService"></param>
+    /// <param name="dueDate"></param>
+    /// <param name="cancellationToken"></param>
+    /// <param name="title"></param>
+    /// <param name="description"></param>
+    /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status406NotAcceptable, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
     public async Task<IActionResult> Add([FromServices] IAddTaskService addTaskService,
-        [FromBody] AddTaskDto addTaskDto, CancellationToken cancellationToken = default)
+        [FromForm] string title, [FromForm] string description, [FromForm] DateTime dueDate,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            await addTaskService.AddAsync(addTaskDto, cancellationToken);
+            await addTaskService.AddAsync(new AddTaskDto(title, description, dueDate), cancellationToken);
             return Ok();
         }
         catch (Exception e)
@@ -36,17 +46,23 @@ public class TaskController : Controller
             return error == null
                 ? StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong")
                 : StatusCode(StatusCodes.Status406NotAcceptable);
-                //: StatusCode(StatusCodes.Status406NotAcceptable, error.GetMessage(_stringLocalizer));
+            //: StatusCode(StatusCodes.Status406NotAcceptable, error.GetMessage(_stringLocalizer));
         }
     }
 
+    /// <summary>
+    /// Sets a task as complete
+    /// </summary>
+    /// <param name="completeTaskService"></param>
+    /// <param name="taskId"></param>
+    /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status406NotAcceptable, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
     public async Task<IActionResult> Complete([FromServices] ICompleteTaskService completeTaskService,
-        [FromBody] Guid taskId, CancellationToken cancellationToken = default)
+        [FromForm] Guid taskId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -63,17 +79,29 @@ public class TaskController : Controller
                     : StatusCodes.Status406NotAcceptable);
         }
     }
-    
+
+    /// <summary>
+    /// Edits a task data.
+    /// If some fields don't be provided, then it won't be changed
+    /// </summary>
+    /// <param name="editTaskService"></param>
+    /// <param name="dueDate"></param>
+    /// <param name="cancellationToken"></param>
+    /// <param name="taskId"></param>
+    /// <param name="title"></param>
+    /// <param name="description"></param>
+    /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
     public async Task<IActionResult> Edit([FromServices] IEditTaskService editTaskService,
-        [FromBody] EditTaskDto editTaskDto, CancellationToken cancellationToken = default)
+        [FromForm] Guid taskId, [FromForm] string title, [FromForm] string description, [FromForm] DateTime dueDate,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            await editTaskService.EditAsync(editTaskDto, cancellationToken);
+            await editTaskService.EditAsync(new EditTaskDto(taskId, title, description, dueDate), cancellationToken);
             return Ok();
         }
         catch (Exception e)
@@ -86,13 +114,20 @@ public class TaskController : Controller
                     : StatusCodes.Status406NotAcceptable);
         }
     }
-    
+
+    /// <summary>
+    /// Deletes a task from the list
+    /// </summary>
+    /// <param name="deleteTaskService"></param>
+    /// <param name="taskId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
     public async Task<IActionResult> Delete([FromServices] IDeleteTaskService deleteTaskService,
-        [FromBody] Guid taskId, CancellationToken cancellationToken = default)
+        [FromForm] Guid taskId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -107,13 +142,20 @@ public class TaskController : Controller
                 : StatusCode(StatusCodes.Status404NotFound);
         }
     }
-    
+
+    /// <summary>
+    /// Gets a task by its Id
+    /// </summary>
+    /// <param name="getTaskService"></param>
+    /// <param name="taskId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TaskDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
     public async Task<IActionResult> Get([FromServices] IGetTaskService getTaskService,
-        [FromBody] Guid taskId, CancellationToken cancellationToken = default)
+        [FromForm] Guid taskId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -128,11 +170,18 @@ public class TaskController : Controller
                 : StatusCode(StatusCodes.Status404NotFound);
         }
     }
-    
+
+    /// <summary>
+    /// GetsAll tasks
+    /// </summary>
+    /// <param name="getTaskListService"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TaskDto))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(string))]
-    public async Task<IActionResult> GetList([FromServices] IGetTaskListService getTaskListService, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetList([FromServices] IGetTaskListService getTaskListService,
+        CancellationToken cancellationToken = default)
     {
         try
         {

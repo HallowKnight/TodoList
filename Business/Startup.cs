@@ -4,11 +4,13 @@ using Business.Actions.Task.Complete;
 using Business.Actions.Task.Delete;
 using Business.Actions.Task.Get;
 using Business.Actions.Task.GetList;
-using Business.Application.Commands.Task;
-using Business.Application.Commands.Task.Add;
+using Business.Application.Behaviors;
 using Domain.Aggregates.TaskAggregate;
-using Domain.Aggregates.TaskAggregate.Exceptions;
+using Infrastructure.Persistence.DbContext;
 using Infrastructure.Repository.Task;
+using MediatR;
+using MediatR.Pipeline;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +22,9 @@ public class Startup(IConfiguration configuration)
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddDbContext<SqlDbContext>(option =>
+            option.UseSqlServer(configuration.GetConnectionString("SqlDbContext")));
+        
         #region Repository
 
         services.AddScoped<ITaskCommandRepository, TaskCommandRepository>();
@@ -28,17 +33,20 @@ public class Startup(IConfiguration configuration)
         #endregion
 
         #region Services
-
-        // services.AddTransient<ITaskValidations, TaskValidations>();
-        services.AddMediatR(typeof(AddTaskCommand).GetTypeInfo().Assembly);
-        services.AddMediatR(Assembly.GetExecutingAssembly());
+        
         services.AddTransient<IAddTaskService, AddTaskService>();
         services.AddTransient<ICompleteTaskService, CompleteTaskService>();
         services.AddTransient<IDeleteTaskService, DeleteTaskService>();
         services.AddTransient<IGetTaskService, GetTaskService>();
         services.AddTransient<IGetTaskListService, GetTaskListService>();
         
+        services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly);
+        });
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         #endregion
-
     }
 }
